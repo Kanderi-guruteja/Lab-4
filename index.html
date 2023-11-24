@@ -1,74 +1,33 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=OpenSans:wght@400;700&display=swap" >
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src = "fetchweatherapi.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="fetchweatherapi.js"></script>
+  <title>Weather App</title>
 </head>
 
 <body>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div class="row">
-<div id = "mainpage" class="weather_data">
-
-    </br>
-    </br>
-
-<h1 style="color: rgb(219, 219, 200);"> Welcome to the Weather APP</h1>
-<h5 style="font-family: Times New Roma;font-style:italic;color:white"> By Pankaj Chourasia</h5>
-<input type = "text" class="input_shadow" id="city" placeholder = "Please enter the location here"><br><br>
-<button class="btn" id= "getWeather">Search</button>
-<button class="btn" id="getCurLoc">Find Your Current Location</button>
-<span id = "errorinpage"></span>
-<p></p>
-</div>
-
-<div id= "currentWeather" class="weather_data" >
-
-<div id ="weather_info" class= "card-box">
-
-     <div class="weather">
-      <div class="city" id="location"></div>
-      <div class="day">
-        <p id="dateTime"></p>
-
-      </div>
-      <div class="wheather">
-        <h2 class="temp" id="temperatureC"></h2>
-        <h2>&nbsp|&nbsp</h2>
-        <h2 id="temperatureF"></h2>
-
-        <img  alt="" class="icon" id="weatherIcon" />
-
-      </div>
-      <div class="description" id="txtWord"></div>
-      <div class="humidity" id="humidity"></div>
-      <div class="precipitation" id="precipitation"></div>
-      <div class="wind" id="wind"></div>
+  <div class="row">
+    <div id="mainpage" class="weather_data">
+      <!-- Rest of your HTML content -->
     </div>
 
-
-
+    <div id="currentWeather" class="weather_data">
+      <!-- Rest of your HTML content -->
     </div>
 
-
-
-</div>
-
-
-    <div id= "weekForecast" class="weather_data" >
-
-
-
-
-
-
-
-        </div>
-
+    <div id="weekForecast" class="weather_data">
+      <!-- Rest of your HTML content -->
     </div>
+
+  </div>
+
 </body>
+
 </html>

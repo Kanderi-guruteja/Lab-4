@@ -1,53 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Sunrise Sunset Web App</title>
-</head>
-<body>
-    <div class="container">
-        <img src="weather.jpeg" alt="Weather Image" class="weather-image">
-        <h1>Sunrise and Sunset Dashboard</h1>
-        <div class="location">
-            <label for="location">Location:</label>
-            <input type="text" id="location" placeholder="Enter location">
-            <button onclick="searchLocation()">Search</button>
-            <button onclick="getCurrentLocation()">Use Current Location</button>
-        </div>
-        <div class="options">
-            <label for="date">Select Date:</label>
-            <select id="date">
-                <option value="today">Today</option>
-                <option value="tomorrow">Tomorrow</option>
-            </select>
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-            <label for="event">Select Event:</label>
-            <select id="event">
-                <option value="sunrise">Sunrise</option>
-                <option value="sunset">Sunset</option>
-                <option value="dawn">Dawn</option>
-                <option value="dusk">Dusk</option>
-                <option value="dayLength">Day Length</option>
-                <option value="solarNoon">Solar Noon</option>
-            </select>
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
 
-            <button onclick="getData()">Get Data</button>
-        </div>
+h1 {
+    margin-top: 0;
+}
 
-        <div id="result" class="result"></div>
+.weather-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
 
-        <!-- Credits for APIs -->
-        <div class="credits">
-            <p>Resources:</p>
-            <ul>
-                <li><a href="https://sunrisesunset.io/" target="_blank">Sunrise Sunset API</a></li>
-                <li><a href="https://sunrisesunset.io/api/" target="_blank">Sunrise Sunset API Documentation</a></li>
-                <li><a href="https://geocode.maps.co/" target="_blank">Geocode API</a></li>
-            </ul>
-        </div>
-    </div>
-    <script src="fetchapi.js"></script>
-</body>
-</html>
+.location, .options {
+    margin-bottom: 20px;
+}
+
+button {
+    margin-left: 10px;
+}
+
+.result {
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.credits {
+    margin-top: 20px;
+}
+
+.credits p {
+    font-weight: bold;
+}
+
+.credits ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.credits li {
+    margin-bottom: 5px;
+}
+
+.credits a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+.credits a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}

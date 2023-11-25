@@ -35,12 +35,13 @@ function searchLocation() {
 function getCurrentLocation() {
     // Implement Geolocation API for getting current location
     // Update latitude and longitude, then call getData()
+    alert("Feature not implemented. Please enter a location manually.");
 }
 
 function getData(latitude, longitude, date, event) {
     const resultDiv = document.getElementById('result');
 
-    const apiUrl = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${date}&formatted=0`;
+    const apiUrl = `https://api.sunrisesunset.io/json?lat=${latitude}&lng=${longitude}&date=${date}&formatted=0`;
 
     fetch(apiUrl)
         .then(response => {
@@ -52,7 +53,12 @@ function getData(latitude, longitude, date, event) {
         .then(data => {
             if (data.status === "OK") {
                 // Update the resultDiv with the relevant data
-                resultDiv.innerHTML = `<p>${event} time at ${latitude}, ${longitude} on ${date}: ${data.results[event]}</p>`;
+                resultDiv.innerHTML = `
+                    <p><strong>${event} time:</strong> ${data.results[event]}</p>
+                    <p><strong>Day Length:</strong> ${data.results.day_length}</p>
+                    <p><strong>Solar Noon:</strong> ${data.results.solar_noon}</p>
+                    <p><strong>Timezone:</strong> ${data.results.timezone}</p>
+                `;
             } else {
                 throw new Error(`API request failed: ${data.status}`);
             }

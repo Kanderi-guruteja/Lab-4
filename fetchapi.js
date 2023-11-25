@@ -1,6 +1,7 @@
-document.getElementById('current-location').addEventListener('click', getCurrentLocation);
-document.getElementById('predefined-locations').addEventListener('change', handleLocationChange);
 document.getElementById('location-search').addEventListener('input', handleLocationSearch);
+document.getElementById('location').addEventListener('input', handleLocationInput);
+document.getElementById('get-data').addEventListener('click', getData);
+document.getElementById('use-current-location').addEventListener('click', getCurrentLocation);
 
 function getCurrentLocation() {
     if (navigator.geolocation) {
@@ -13,17 +14,9 @@ function getCurrentLocation() {
     }
 }
 
-function handleLocationChange(event) {
-    const selectedValue = event.target.value;
-    if (selectedValue) {
-        const [latitude, longitude] = selectedValue.split(',');
-        fetchSunriseSunset(latitude, longitude);
-    }
-}
-
-function handleLocationSearch(event) {
+function handleLocationInput(event) {
     const query = encodeURIComponent(event.target.value);
-    if (query.length > 2) { // Optional: Set a minimum length for the search query
+    if (query.length > 2) {
         fetch(`https://geocode.maps.co/search?q=${query}`)
             .then(response => {
                 if (!response.ok) {
@@ -43,6 +36,34 @@ function handleLocationSearch(event) {
                 console.error("Error fetching location data:", error);
                 showError("Error fetching location data. Please try again.");
             });
+    }
+}
+
+function handleLocationSearch(event) {
+    if (event.inputType === 'insertText' || event.inputType === 'deleteContentBackward') {
+        // Check if the change is due to user input
+        const query = encodeURIComponent(event.target.value);
+        if (query.length > 2) {
+            fetch(`https://geocode.maps.co/search?q=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.length > 0) {
+                        const { lat, lon } = data[0];
+                        fetchSunriseSunset(lat, lon);
+                    } else {
+                        showError("Location not found.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching location data:", error);
+                    showError("Error fetching location data. Please try again.");
+                });
+        }
     }
 }
 

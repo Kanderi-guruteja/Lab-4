@@ -1,128 +1,61 @@
-document.getElementById('location-search').addEventListener('input', handleLocationSearch);
-document.getElementById('location').addEventListener('input', handleLocationInput);
-document.getElementById('get-data').addEventListener('click', getData);
-document.getElementById('use-current-location').addEventListener('click', getCurrentLocation);
+function searchLocation() {
+    const locationInput = document.getElementById('location').value;
+    const geocodeUrl = `https://geocode.maps.co/search?q=${encodeURIComponent(locationInput)}`;
+
+    // Fetch geocode data
+    fetch(geocodeUrl)
+        .then(response => response.json())
+        .then(geocodeData => {
+            if (geocodeData.length > 0) {
+                const latitude = geocodeData[0].lat;
+                const longitude = geocodeData[0].lon;
+                const sunriseSunsetUrl = `https://api.sunrisesunset.io/json?lat=${latitude}&lng=${longitude}&date=today&timezone=auto&format=24h`;
+
+                // Fetch sunrise and sunset data
+                fetch(sunriseSunsetUrl)
+                    .then(response => response.json())
+                    .then(sunriseSunsetData => {
+                        displaySunriseSunset(sunriseSunsetData);
+                    })
+                    .catch(error => displayError('Error fetching sunrise sunset data'));
+            } else {
+                displayError('Location not found');
+            }
+        })
+        .catch(error => displayError('Error fetching geocode data'));
+}
 
 function getCurrentLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-            const { latitude, longitude } = position.coords;
-            fetchSunriseSunset(latitude, longitude);
-        }, showError);
+        navigator.geolocation.getCurrentPosition(position => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const sunriseSunsetUrl = `https://api.sunrisesunset.io/json?lat=${latitude}&lng=${longitude}&date=today&timezone=auto&format=24h`;
+
+            // Fetch sunrise and sunset data
+            fetch(sunriseSunsetUrl)
+                .then(response => response.json())
+                .then(sunriseSunsetData => {
+                    displaySunriseSunset(sunriseSunsetData);
+                })
+                .catch(error => displayError('Error fetching sunrise sunset data'));
+        }, error => {
+            displayError('Error getting current location');
+        });
     } else {
-        showError("Geolocation is not supported by this browser.");
+        displayError('Geolocation is not supported by your browser');
     }
 }
 
-function handleLocationInput(event) {
-    const query = encodeURIComponent(event.target.value);
-    if (query.length > 2) {
-        fetch(`https://geocode.maps.co/search?q=${query}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.length > 0) {
-                    const { lat, lon } = data[0];
-                    fetchSunriseSunset(lat, lon);
-                } else {
-                    showError("Location not found.");
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching location data:", error);
-                showError("Error fetching location data. Please try again.");
-            });
-    }
+function displaySunriseSunset(data) {
+    const sunriseDiv = document.getElementById('sunrise');
+    const sunsetDiv = document.getElementById('sunset');
+
+    sunriseDiv.textContent = `Sunrise: ${data.results.sunrise}`;
+    sunsetDiv.textContent = `Sunset: ${data.results.sunset}`;
 }
 
-function handleLocationSearch(event) {
-    if (event.inputType === 'insertText' || event.inputType === 'deleteContentBackward') {
-        // Check if the change is due to user input
-        const query = encodeURIComponent(event.target.value);
-        if (query.length > 2) {
-            fetch(`https://geocode.maps.co/search?q=${query}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.length > 0) {
-                        const { lat, lon } = data[0];
-                        fetchSunriseSunset(lat, lon);
-                    } else {
-                        showError("Location not found.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error fetching location data:", error);
-                    showError("Error fetching location data. Please try again.");
-                });
-        }
-    }
+function displayError(message) {
+    const errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.textContent = message;
 }
-
-function fetchSunriseSunset(latitude, longitude) {
-    document.getElementById('data-display').innerHTML = '';
-
-    for (let i = 0; i < 7; i++) {
-        setTimeout(() => {
-            let date = new Date();
-            date.setDate(date.getDate() + i);
-            fetchDataForDate(latitude, longitude, date.toISOString().split('T')[0], i);
-        }, i * 500);
-    }
-}
-
-function fetchDataForDate(latitude, longitude, date, dayIndex) {
-    const url = `https://api.sunrisesunset.io/json?lat=${latitude}&lng=${longitude}&date=${date}`;
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'OK') {
-                updateUI(data.results, dayIndex, date);
-            } else {
-                showError("Error fetching data.");
-            }
-        })
-        .catch(() => showError("Error fetching data."));
-}
-
-function updateUI(data, dayIndex, date) {
-    let display = document.getElementById('data-display');
-    let dayData = `<div class="day-data">
-        <h3>Day ${dayIndex + 1} (${date}):</h3>
-        <p><img src="logos/sunrise-today.png" alt="Sunrise Today Logo"><strong>Sunrise:</strong>  ${data.sunrise}</p>
-        <p><img src="logos/sunset-today.png" alt="Sunset Today Logo"><strong>Sunset:</strong>  ${data.sunset}</p>
-        <p><img src="logos/dawn-today.png" alt="Dawn Today Logo"><strong>Dawn:</strong>  ${data.dawn}</p>
-        <p><img src="logos/dusk-today.png" alt="Dusk Today Logo"><strong>Dusk:</strong>  ${data.dusk}</p>
-        <p><img src="logos/daylength-today.png" alt="Day Length Today Logo"> <strong>Day Length:</strong> ${data.day_length}</p>
-        <p><img src="logos/solarnoon-today.png" alt="Solar Noon Today Logo"><strong>Solar Noon:</strong>  ${data.solar_noon}</p>
-    </div>`;
-    display.innerHTML += dayData;
-}
-
-function showError(error) {
-    const display = document.getElementById('data-display');
-    display.innerText = error;
-}
-
-function updateTime() {
-    const now = new Date();
-    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    const dateString = now.toLocaleDateString('en-US', dateOptions);
-    const timeString = now.toLocaleTimeString('en-US', timeOptions);
-    document.getElementById('current-time').innerText = `${dateString} | ${timeString}`;
-}
-setInterval(updateTime, 1000);

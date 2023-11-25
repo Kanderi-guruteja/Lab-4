@@ -25,14 +25,26 @@ function searchLocation() {
         })
         .catch(error => {
             console.error("Geocode API error:", error);
-            alert("Error fetching location data. Please try again.");
+            displayError("Error fetching location data. Please try again.");
         });
 }
 
 function getCurrentLocation() {
-    // Implement Geolocation API for getting current location
-    // Update latitude and longitude, then call getData()
-    alert("Feature not implemented. Please enter a location manually.");
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            const dateSelect = document.getElementById('date');
+            const eventSelect = document.getElementById('event');
+            getData(latitude, longitude, dateSelect.value, eventSelect.value);
+        }, error => {
+            console.error("Geolocation API error:", error);
+            displayError("Error getting current location. Please try again.");
+        });
+    } else {
+        displayError("Geolocation is not supported by your browser.");
+    }
 }
 
 function getData(latitude, longitude, date, event) {
@@ -57,10 +69,16 @@ function getData(latitude, longitude, date, event) {
                     <p><strong>Timezone:</strong> ${data.results.timezone}</p>
                 `;
             } else {
-                throw new Error(`API request failed: ${data.status}`);
+                displayError("Error fetching sunrise and sunset data. Please try again.");
             }
         })
         .catch(error => {
-            resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            console.error("Sunrise Sunset API error:", error);
+            displayError("Error fetching sunrise and sunset data. Please try again.");
         });
+}
+
+function displayError(errorMessage) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `<p class="error">${errorMessage}</p>`;
 }

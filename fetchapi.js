@@ -1,24 +1,21 @@
 function searchLocation() {
     const locationInput = document.getElementById('location');
+    const location = locationInput.value.trim();
 
-    const location = locationInput.value;
-
-    if (location.trim() === "") {
+    if (location === "") {
         alert("Please enter a location");
         return;
     }
 
-    // Use the geocode API to get latitude and longitude for the named location
-    const geocodeUrl = `https://geocode.maps.co/?address=${encodeURIComponent(location)}`;
+    const geocodeUrl = `https://geocode.maps.co/search?q=${encodeURIComponent(location)}`;
 
     fetch(geocodeUrl)
         .then(response => response.json())
         .then(geocodeData => {
             if (geocodeData.results.length > 0) {
-                const latitude = geocodeData.results[0].geometry.location.lat;
-                const longitude = geocodeData.results[0].geometry.location.lng;
+                const latitude = geocodeData.results[0].geometry.lat;
+                const longitude = geocodeData.results[0].geometry.lon;
 
-                // Now, you can use the latitude and longitude to fetch sunrise/sunset data
                 const dateSelect = document.getElementById('date');
                 const eventSelect = document.getElementById('event');
                 getData(latitude, longitude, dateSelect.value, eventSelect.value);
